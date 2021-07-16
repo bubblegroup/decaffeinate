@@ -18,6 +18,7 @@ export interface Options {
   disallowInvalidConstructors?: boolean;
   optionalChaining?: boolean;
   nullishCoalescing?: boolean;
+  logicalAssignment?: boolean;
 }
 
 export const DEFAULT_OPTIONS: Options = {
