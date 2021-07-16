@@ -52,6 +52,7 @@ import IncrementDecrementPatcher from './patchers/IncrementDecrementPatcher';
 import InOpPatcher from './patchers/InOpPatcher';
 import InstanceofOpPatcher from './patchers/InstanceofOpPatcher';
 import JavaScriptPatcher from './patchers/JavaScriptPatcher';
+import LogicalAssignmentCompoundAssignOpPatcher from './patchers/LogicalAssignmentCompoundAssignOpPatcher';
 import LogicalNotOpPatcher from './patchers/LogicalNotOpPatcher';
 import LogicalOpCompoundAssignOpPatcher from './patchers/LogicalOpCompoundAssignOpPatcher';
 import LogicalOpPatcher from './patchers/LogicalOpPatcher';
@@ -60,6 +61,7 @@ import ModuleSpecifierPatcher from './patchers/ModuleSpecifierPatcher';
 import ModuloOpCompoundAssignOpPatcher from './patchers/ModuloOpCompoundAssignOpPatcher';
 import ModuloOpPatcher from './patchers/ModuloOpPatcher';
 import NewOpPatcher from './patchers/NewOpPatcher';
+import NullishCoalescingCompoundAssignOpPatcher from './patchers/NullishCoalescingCompoundAssignOpPatcher';
 import ObjectInitialiserMemberPatcher from './patchers/ObjectInitialiserMemberPatcher';
 import ObjectInitialiserPatcher from './patchers/ObjectInitialiserPatcher';
 import OfOpPatcher from './patchers/OfOpPatcher';
@@ -223,10 +225,18 @@ export default class MainStage extends TransformCoffeeScriptStage {
         switch ((node as CompoundAssignOp).op) {
           case 'LogicalAndOp':
           case 'LogicalOrOp':
-            return LogicalOpCompoundAssignOpPatcher;
+            if (this.options.logicalAssignment) {
+              return LogicalAssignmentCompoundAssignOpPatcher;
+            } else {
+              return LogicalOpCompoundAssignOpPatcher;
+            }
 
           case 'ExistsOp':
-            return ExistsOpCompoundAssignOpPatcher;
+            if (this.options.logicalAssignment) {
+              return NullishCoalescingCompoundAssignOpPatcher;
+            } else {
+              return ExistsOpCompoundAssignOpPatcher;
+            }
 
           case 'ModuloOp':
             return ModuloOpCompoundAssignOpPatcher;
