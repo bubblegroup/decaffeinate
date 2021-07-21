@@ -7,12 +7,6 @@ import ExistsOpCompoundAssignOpPatcher from './ExistsOpCompoundAssignOpPatcher';
  */
 export default class NullishCoalescingCompoundAssignOpPatcher extends ExistsOpCompoundAssignOpPatcher {
   patchAsExpression({ needsParens = false }: PatchOptions = {}): void {
-    // Fall back to the non-fancy way if the LHS might be unbound.
-    if (this.needsTypeofCheck()) {
-      super.patchAsExpression({ needsParens });
-      return;
-    }
-
     if (this.negated) {
       this.insert(this.contentStart, '!');
     }
@@ -22,7 +16,9 @@ export default class NullishCoalescingCompoundAssignOpPatcher extends ExistsOpCo
       this.insert(this.contentStart, '(');
     }
 
+    this.assignee.patch();
     this.patchOperator();
+    this.expression.patch();
 
     if (shouldAddParens) {
       this.insert(this.contentEnd, ')');
@@ -30,12 +26,7 @@ export default class NullishCoalescingCompoundAssignOpPatcher extends ExistsOpCo
   }
 
   patchAsStatement(options: PatchOptions = {}): void {
-    if (this.lhsHasSoakOperation()) {
-      this.patchAsExpression(options);
-      return;
-    }
-
-    this.patchOperator();
+    this.patchAsExpression(options);
   }
 
   patchOperator(): void {

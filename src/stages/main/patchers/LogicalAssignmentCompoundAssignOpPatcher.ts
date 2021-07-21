@@ -15,7 +15,9 @@ export default class LogicalAssignmentCompoundAssignOpPatcher extends LogicalOpC
       this.insert(this.contentStart, '(');
     }
 
+    this.assignee.patch();
     this.patchOperator();
+    this.expression.patch();
 
     if (shouldAddParens) {
       this.insert(this.contentEnd, ')');
@@ -23,12 +25,7 @@ export default class LogicalAssignmentCompoundAssignOpPatcher extends LogicalOpC
   }
 
   patchAsStatement(options: PatchOptions = {}): void {
-    if (this.lhsHasSoakOperation()) {
-      this.patchAsExpression(options);
-      return;
-    }
-
-    this.patchOperator();
+    this.patchAsExpression(options);
   }
 
   patchOperator(): void {

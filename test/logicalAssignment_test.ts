@@ -5,8 +5,12 @@ function check(source: string, expected: string): void {
 }
 
 describe('with logical assignment enabled', () => {
-  it('passes through logical AND', () => {
+  it('passes through logical AND assignment', () => {
     check(`a &&= 1`, `a &&= 1;`);
+  });
+
+  it('patches both sides of logical AND assignment', () => {
+    check(`a[f x] &&= -> y`, `a[f(x)] &&= () => y;`);
   });
 
   it('passes through logical OR', () => {
