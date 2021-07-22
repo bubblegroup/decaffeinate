@@ -52,7 +52,6 @@ import IncrementDecrementPatcher from './patchers/IncrementDecrementPatcher';
 import InOpPatcher from './patchers/InOpPatcher';
 import InstanceofOpPatcher from './patchers/InstanceofOpPatcher';
 import JavaScriptPatcher from './patchers/JavaScriptPatcher';
-import LogicalAssignmentCompoundAssignOpPatcher from './patchers/LogicalAssignmentCompoundAssignOpPatcher';
 import LogicalNotOpPatcher from './patchers/LogicalNotOpPatcher';
 import LogicalOpCompoundAssignOpPatcher from './patchers/LogicalOpCompoundAssignOpPatcher';
 import LogicalOpPatcher from './patchers/LogicalOpPatcher';
@@ -227,7 +226,7 @@ export default class MainStage extends TransformCoffeeScriptStage {
           case 'LogicalAndOp':
           case 'LogicalOrOp':
             if (this.options.logicalAssignment) {
-              return LogicalAssignmentCompoundAssignOpPatcher;
+              return CompoundAssignOpPatcher;
             } else {
               return LogicalOpCompoundAssignOpPatcher;
             }

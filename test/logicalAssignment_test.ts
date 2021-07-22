@@ -20,4 +20,8 @@ describe('with logical assignment enabled', () => {
   it('translates existence to nullish coalescing', () => {
     check(`a ?= 1`, `a ??= 1;`);
   });
+
+  it('patches both sides of nullish coalescing assignment', () => {
+    check(`a[f x] ?= -> y`, `a[f(x)] ??= () => y;`);
+  });
 });
