@@ -3,7 +3,7 @@ import SourceToken from 'coffee-lex/dist/SourceToken';
 import { InOp } from 'decaffeinate-parser/dist/nodes';
 import NodePatcher from '../../../patchers/NodePatcher';
 import { PatcherContext } from '../../../patchers/types';
-import { FIX_INCLUDES_EVALUATION_ORDER, REMOVE_ARRAY_FROM } from '../../../suggestions';
+import { FIX_INCLUDES_EVALUATION_ORDER } from '../../../suggestions';
 import ArrayInitialiserPatcher from './ArrayInitialiserPatcher';
 import BinaryOpPatcher from './BinaryOpPatcher';
 import DynamicMemberAccessOpPatcher from './DynamicMemberAccessOpPatcher';
@@ -55,7 +55,7 @@ export default class InOpPatcher extends BinaryOpPatcher {
 
     let rightCode = this.right.patchAndGetCode();
     if (this.shouldWrapInArrayFrom()) {
-      rightCode = `Array.from(${rightCode})`;
+      rightCode = `${this.arrayFrom()}(${rightCode})`;
     } else if (this.rhsNeedsParens()) {
       rightCode = `(${rightCode})`;
     }
@@ -101,7 +101,7 @@ export default class InOpPatcher extends BinaryOpPatcher {
     const wrapInArrayFrom = this.shouldWrapInArrayFrom();
     const rhsNeedsParens = wrapInArrayFrom || this.rhsNeedsParens();
     if (wrapInArrayFrom) {
-      this.insert(this.right.outerStart, 'Array.from');
+      this.insert(this.right.outerStart, this.arrayFrom());
     }
     if (rhsNeedsParens) {
       this.insert(this.right.outerStart, '(');
@@ -118,9 +118,6 @@ export default class InOpPatcher extends BinaryOpPatcher {
       return false;
     }
     const shouldWrap = !(this.right instanceof ArrayInitialiserPatcher);
-    if (shouldWrap) {
-      this.addSuggestion(REMOVE_ARRAY_FROM);
-    }
     return shouldWrap;
   }
 

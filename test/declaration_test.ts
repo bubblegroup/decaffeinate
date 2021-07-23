@@ -112,6 +112,25 @@ describe('declarations', () => {
     checkCS2(`[a] = b`, `const [a] = b;`);
   });
 
+  it('respects the namedHelpers option', () => {
+    checkCS1(
+      `
+      [a] = b
+    `,
+      `
+      const [a] = __array__(b);
+      function __array__(x) {
+        return Array.from(x);
+      }
+    `,
+      {
+        options: {
+          namedHelpers: true,
+        },
+      }
+    );
+  });
+
   it('adds variable declarations for destructuring object assignment', () => {
     check(`{a} = b`, `const {a} = b;`);
   });

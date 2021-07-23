@@ -1,5 +1,5 @@
 import { PatcherContext } from '../../../patchers/types';
-import { REMOVE_ARRAY_FROM, SHORTEN_NULL_CHECKS, SIMPLIFY_COMPLEX_ASSIGNMENTS } from '../../../suggestions';
+import { SHORTEN_NULL_CHECKS, SIMPLIFY_COMPLEX_ASSIGNMENTS } from '../../../suggestions';
 import canPatchAssigneeToJavaScript from '../../../utils/canPatchAssigneeToJavaScript';
 import containsSuperCall from '../../../utils/containsSuperCall';
 import extractPrototypeAssignPatchers from '../../../utils/extractPrototypeAssignPatchers';
@@ -152,8 +152,7 @@ export default class AssignOpPatcher extends NodePatcher {
     const needsArrayFrom = this.shouldUseArrayFrom() && this.assignee instanceof ArrayInitialiserPatcher;
     this.assignee.patch();
     if (needsArrayFrom) {
-      this.addSuggestion(REMOVE_ARRAY_FROM);
-      this.insert(this.expression.outerStart, 'Array.from(');
+      this.insert(this.expression.outerStart, `${this.arrayFrom()}(`);
     }
 
     if (needsArrayFrom) {
@@ -200,8 +199,7 @@ export default class AssignOpPatcher extends NodePatcher {
     } else if (canPatchAssigneeToJavaScript(patcher.node, this.options)) {
       const assigneeCode = patcher.patchAndGetCode();
       if (this.shouldUseArrayFrom() && patcher instanceof ArrayInitialiserPatcher) {
-        this.addSuggestion(REMOVE_ARRAY_FROM);
-        return [`${assigneeCode} = Array.from(${ref})`];
+        return [`${assigneeCode} = ${this.arrayFrom()}(${ref})`];
       } else {
         return [`${assigneeCode} = ${ref}`];
       }

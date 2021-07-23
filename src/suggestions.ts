@@ -28,6 +28,11 @@ export const AVOID_INLINE_ASSIGNMENTS = {
   message: 'Avoid inline assignments',
 };
 
+export const REMOVE_DC_ARRAY = {
+  suggestionCode: 'DS105',
+  message: 'Remove unnecessary use of __array__, or replace its local definition with an import',
+};
+
 export const SIMPLIFY_COMPLEX_ASSIGNMENTS = {
   suggestionCode: 'DS201',
   message: 'Simplify complex destructure assignments',

@@ -2,7 +2,7 @@ import { traverse } from 'decaffeinate-parser';
 import { Float, Int, Number, UnaryNegateOp } from 'decaffeinate-parser/dist/nodes';
 import NodePatcher from '../../../patchers/NodePatcher';
 import { PatcherContext } from '../../../patchers/types';
-import { REMOVE_ARRAY_FROM, SIMPLIFY_DYNAMIC_RANGE_LOOPS } from '../../../suggestions';
+import { SIMPLIFY_DYNAMIC_RANGE_LOOPS } from '../../../suggestions';
 import blockStartsWithObjectInitialiser from '../../../utils/blockStartsWithObjectInitialiser';
 import countVariableUsages from '../../../utils/countVariableUsages';
 import notNull from '../../../utils/notNull';
@@ -76,7 +76,7 @@ export default class ForInPatcher extends ForPatcher {
     this.remove(this.contentStart, this.target.outerStart);
 
     if (this.shouldWrapMapExpressionTargetInArrayFrom()) {
-      this.insert(this.target.contentStart, 'Array.from(');
+      this.insert(this.target.contentStart, `${this.arrayFrom()}(`);
       this.target.patch();
       this.insert(this.target.contentEnd, ')');
     } else {
@@ -316,7 +316,7 @@ export default class ForInPatcher extends ForPatcher {
     }
 
     if (this.shouldWrapForOfStatementTargetInArrayFrom()) {
-      this.insert(this.target.outerStart, 'Array.from(');
+      this.insert(this.target.outerStart, `${this.arrayFrom()}(`);
     }
     this.target.patch();
     if (this.shouldWrapForOfStatementTargetInArrayFrom()) {
@@ -600,9 +600,6 @@ export default class ForInPatcher extends ForPatcher {
 
   shouldWrapMapExpressionTargetInArrayFrom(): boolean {
     const shouldWrap = !this.options.looseForExpressions && !this.isTargetAlreadyArray();
-    if (shouldWrap) {
-      this.addSuggestion(REMOVE_ARRAY_FROM);
-    }
     return shouldWrap;
   }
 
@@ -611,9 +608,6 @@ export default class ForInPatcher extends ForPatcher {
    */
   shouldWrapForOfStatementTargetInArrayFrom(): boolean {
     const shouldWrap = !this.options.looseForOf && !this.isTargetAlreadyArray();
-    if (shouldWrap) {
-      this.addSuggestion(REMOVE_ARRAY_FROM);
-    }
     return shouldWrap;
   }
 

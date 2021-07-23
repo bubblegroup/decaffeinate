@@ -146,6 +146,10 @@ function parseArguments(args: Array<string>): CLIOptions {
         baseOptions.nullishCoalescing = true;
         break;
 
+      case '--named-helpers':
+        baseOptions.namedHelpers = true;
+        break;
+
       default:
         if (arg.startsWith('-')) {
           console.error(`Error: unrecognized option '${arg}'`);

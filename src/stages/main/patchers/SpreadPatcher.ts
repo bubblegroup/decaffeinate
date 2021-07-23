@@ -1,7 +1,6 @@
 import SourceType from 'coffee-lex/dist/SourceType';
 import { Identifier } from 'decaffeinate-parser/dist/nodes';
 import { PatcherContext } from '../../../patchers/types';
-import { REMOVE_ARRAY_FROM } from '../../../suggestions';
 import NodePatcher from './../../../patchers/NodePatcher';
 import FunctionApplicationPatcher from './FunctionApplicationPatcher';
 
@@ -40,7 +39,7 @@ export default class SpreadPatcher extends NodePatcher {
       this.insert(this.expression.outerStart, '...');
     }
     if (needsArrayFrom) {
-      this.insert(this.expression.outerStart, 'Array.from(');
+      this.insert(this.expression.outerStart, `${this.arrayFrom()}(`);
     }
     this.expression.patch();
 
@@ -78,7 +77,6 @@ export default class SpreadPatcher extends NodePatcher {
     if (this.expression.node instanceof Identifier && this.expression.node.data === 'arguments') {
       return false;
     }
-    this.addSuggestion(REMOVE_ARRAY_FROM);
     return true;
   }
 }
