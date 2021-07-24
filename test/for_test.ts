@@ -748,6 +748,25 @@ describe('for loops', () => {
     );
   });
 
+  it('respects the namedHelpers option', () => {
+    checkCS1(
+      `
+      a(f for e in l)
+    `,
+      `
+      a(__array__(l).map((e) => f));
+      function __array__(x) {
+        return Array.from(x);
+      }
+    `,
+      {
+        options: {
+          namedHelpers: true,
+        },
+      }
+    );
+  });
+
   it('does not wrap in Array.from for for-in expressions over an array literal', () => {
     check(
       `

@@ -19,6 +19,7 @@ export interface Options {
   optionalChaining?: boolean;
   logicalAssignment?: boolean;
   nullishCoalescing?: boolean;
+  namedHelpers?: boolean;
 }
 
 export const DEFAULT_OPTIONS: Options = {

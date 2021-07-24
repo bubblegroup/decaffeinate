@@ -74,7 +74,7 @@ describe('decaffeinate CLI', () => {
       '--literate',
       `
       This is a literate file.
-      
+
           literate = true
     `,
       `
@@ -184,6 +184,26 @@ describe('decaffeinate CLI', () => {
       __in__(a, b);
       function __in__(needle, haystack) {
         return Array.from(haystack).indexOf(needle) >= 0;
+      }
+    `
+    );
+  });
+
+  it('respects the namedHelpers option', () => {
+    runCli(
+      '--named-helpers',
+      `
+      a in b
+    `,
+      `
+      /*
+       * decaffeinate suggestions:
+       * DS105: Remove unnecessary use of __array__, or replace its local definition with an import
+       * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+       */
+      __array__(b).includes(a);
+      function __array__(x) {
+        return Array.from(x);
       }
     `
     );
@@ -380,14 +400,14 @@ describe('decaffeinate CLI', () => {
     `,
       `
       stdin: Cannot automatically convert a subclass with a constructor that uses \`this\` before \`super\`.
-  
+
       JavaScript requires all subclass constructors to call \`super\` and to do so
       before the first use of \`this\`, so the following cases cannot be converted
       automatically:
       * Constructors in subclasses that use \`this\` before \`super\`.
       * Constructors in subclasses that omit the \`super\` call.
       * Subclasses that use \`=>\` method syntax to automatically bind methods.
-      
+
       To convert these cases to JavaScript anyway, remove the option
       --disallow-invalid-constructors when running decaffeinate.
         1 | class A extends B
@@ -512,7 +532,7 @@ describe('decaffeinate CLI', () => {
       'test_fixtures/level1',
       '',
       `
-      test_fixtures/level1/level2/file.coffee → test_fixtures/level1/level2/file.js 
+      test_fixtures/level1/level2/file.coffee → test_fixtures/level1/level2/file.js
     `
     );
     const contents = readFileSync('./test_fixtures/level1/level2/file.js').toString();

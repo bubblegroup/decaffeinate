@@ -308,4 +308,23 @@ describe('in operator', () => {
       }
     );
   });
+
+  it('respects the namedHelpers option', () => {
+    check(
+      `
+      a in b
+    `,
+      `
+      __array__(b).includes(a);
+      function __array__(x) {
+        return Array.from(x);
+      }
+    `,
+      {
+        options: {
+          namedHelpers: true,
+        },
+      }
+    );
+  });
 });

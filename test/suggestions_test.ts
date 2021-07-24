@@ -20,7 +20,7 @@ describe('suggestions', () => {
           this.c = this.c.bind(this);
           super(...args);
         }
-      
+
         c() {
           return d;
         }
@@ -49,7 +49,7 @@ describe('suggestions', () => {
           super(...args);
           this.c = this.c.bind(this);
         }
-      
+
         c() {
           return d;
         }
@@ -175,6 +175,31 @@ describe('suggestions', () => {
       {
         options: {
           disableSuggestionComment: false,
+        },
+      }
+    );
+  });
+
+  it('suggests removing __array__ from includes usages when namedHelpers is on', () => {
+    check(
+      `
+      a in b
+    `,
+      `
+      /*
+       * decaffeinate suggestions:
+       * DS105: Remove unnecessary use of __array__, or replace its local definition with an import
+       * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+       */
+      __array__(b).includes(a);
+      function __array__(x) {
+        return Array.from(x);
+      }
+    `,
+      {
+        options: {
+          disableSuggestionComment: false,
+          namedHelpers: true,
         },
       }
     );

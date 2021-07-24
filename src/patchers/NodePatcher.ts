@@ -5,7 +5,14 @@ import SourceTokenListIndex from 'coffee-lex/dist/SourceTokenListIndex';
 import { FunctionApplication, NewOp, Node, SoakedFunctionApplication } from 'decaffeinate-parser/dist/nodes';
 import MagicString from 'magic-string';
 import { Options } from '../options';
-import { AVOID_IIFES, AVOID_INLINE_ASSIGNMENTS, CLEAN_UP_IMPLICIT_RETURNS, Suggestion } from '../suggestions';
+import {
+  AVOID_IIFES,
+  AVOID_INLINE_ASSIGNMENTS,
+  CLEAN_UP_IMPLICIT_RETURNS,
+  REMOVE_ARRAY_FROM,
+  REMOVE_DC_ARRAY,
+  Suggestion,
+} from '../suggestions';
 import adjustIndent from '../utils/adjustIndent';
 import { logger } from '../utils/debug';
 import DecaffeinateContext from '../utils/DecaffeinateContext';
@@ -1256,6 +1263,30 @@ export default class NodePatcher {
    */
   registerHelper(name: string, code: string): string {
     return notNull(this.parent).registerHelper(name, code);
+  }
+
+  /**
+   * Return the expression that should be used to convert an array, and register
+   * any helpers it requires.
+   */
+  arrayFrom(suggestion = true): string {
+    if (this.options.namedHelpers) {
+      if (suggestion) {
+        this.addSuggestion(REMOVE_DC_ARRAY);
+      }
+      this.registerHelper(
+        '__array__',
+        `function __array__(x) {
+  return Array.from(x);
+}`
+      );
+      return '__array__';
+    } else {
+      if (suggestion) {
+        this.addSuggestion(REMOVE_ARRAY_FROM);
+      }
+      return 'Array.from';
+    }
   }
 
   /**
